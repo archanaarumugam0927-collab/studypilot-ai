@@ -20,6 +20,11 @@ export default function HomeScreen() {
     async function getUser() {
       const { data } = await supabase.auth.getUser();
 
+      if (!data.user) {
+  router.replace("/login");
+  return;
+}
+
       const name =
         data.user?.user_metadata?.full_name ||
         data.user?.email ||
