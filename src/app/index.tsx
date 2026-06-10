@@ -78,7 +78,7 @@ export default function HomeScreen() {
     router.replace("/login");
   }
 
-  const dailyGoal = 5;
+  const dailyGoal = totalTasks > 0 ? totalTasks : 1;
 
   const goalPercentage =
     dailyGoal === 0
