@@ -9,6 +9,8 @@ import {
 import { supabase } from "../lib/supabase";
 
 export default function HomeScreen() {
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
   const [userName, setUserName] = useState("Student");
   const [streak, setStreak] = useState(0);
   const [totalTasks, setTotalTasks] = useState(0);
@@ -21,13 +23,15 @@ export default function HomeScreen() {
       const { data } = await supabase.auth.getUser();
 
       if (!data.user) {
-  router.replace("/login");
-  return;
-}
+        router.replace("/login");
+        return;
+      }
+
+      setCheckingAuth(false);
 
       const name =
-        data.user?.user_metadata?.full_name ||
-        data.user?.email ||
+        data.user.user_metadata?.full_name ||
+        data.user.email ||
         "Student";
 
       setUserName(name);
@@ -35,7 +39,7 @@ export default function HomeScreen() {
       const { data: profile } = await supabase
         .from("profiles")
         .select("streak")
-        .eq("id", data.user?.id)
+        .eq("id", data.user.id)
         .single();
 
       if (profile) {
@@ -45,7 +49,7 @@ export default function HomeScreen() {
       const { data: tasks } = await supabase
         .from("tasks")
         .select("*")
-        .eq("user_id", data.user?.id);
+        .eq("user_id", data.user.id);
 
       if (tasks) {
         const completed = tasks.filter((task) => task.completed).length;
@@ -75,8 +79,22 @@ export default function HomeScreen() {
   }
 
   const dailyGoal = 5;
+
   const goalPercentage =
-    dailyGoal === 0 ? 0 : Math.min(Math.round((completedTasks / dailyGoal) * 100), 100);
+    dailyGoal === 0
+      ? 0
+      : Math.min(
+          Math.round((completedTasks / dailyGoal) * 100),
+          100
+        );
+
+  if (checkingAuth) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Checking login...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -103,8 +121,12 @@ export default function HomeScreen() {
 
       <View style={styles.statsCard}>
         <Text style={styles.statText}>📋 Total Tasks: {totalTasks}</Text>
-        <Text style={styles.statText}>✅ Completed Tasks: {completedTasks}</Text>
-        <Text style={styles.statText}>⏱ Study Hours: {studyHours} Hours</Text>
+        <Text style={styles.statText}>
+          ✅ Completed Tasks: {completedTasks}
+        </Text>
+        <Text style={styles.statText}>
+          ⏱ Study Hours: {studyHours} Hours
+        </Text>
         <Text style={styles.statText}>
           🎯 Daily Goal: {completedTasks} / {dailyGoal} Tasks
         </Text>
@@ -128,6 +150,13 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: "#F8F9FF" },
+
+  loadingText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#0040E0",
+    marginTop: 40,
+  },
 
   headerRow: {
     flexDirection: "row",
@@ -215,7 +244,11 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  aiCard: { backgroundColor: "#DDE1FF", padding: 20, borderRadius: 18 },
+  aiCard: {
+    backgroundColor: "#DDE1FF",
+    padding: 20,
+    borderRadius: 18,
+  },
 
   badge: {
     fontSize: 12,
@@ -224,5 +257,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  aiText: { fontSize: 17, fontWeight: "600", color: "#001356" },
+  aiText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#001356",
+  },
 });
