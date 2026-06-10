@@ -4,6 +4,10 @@ import { StyleSheet, Text, View } from "react-native";
 export default function AppTabs() {
   const pathname = usePathname();
 
+  if (pathname === "/login" || pathname === "/signup") {
+    return <Slot />;
+  }
+
   const tabs = [
     { label: "Dashboard", href: "/" },
     { label: "Tasks", href: "/tasks" },

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 export default function AIInsightsScreen() {
   const [subject, setSubject] = useState("");

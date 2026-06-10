@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 export default function TasksScreen() {
   const [taskTitle, setTaskTitle] = useState("");
